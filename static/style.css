@@ -1,0 +1,139 @@
+/*El css*/
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    width: auto;
+    height: auto;
+    padding-top: 10px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.736), rgba(0, 0, 0, 0.762)), url(https://img.freepik.com/fotos-premium/fondo-quimica-fondo-pantalla-hd-8k-imagen-fotografica-stock_890746-56115.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    color: white;
+    font-weight: bold;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+}
+
+input,
+select {
+    margin-bottom: 10px;
+    width: 100%;
+    /* Asegura que los campos ocupen todo el ancho disponible */
+    box-sizing: border-box;
+    /* Incluye el padding y el border en el width total */
+}
+
+button {
+    margin-right: 10px;
+}
+
+h1,
+h2 {
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.Title {
+    align-items: center;
+}
+
+.Image {
+    display: flex;
+    justify-content: center;
+    /* Centra horizontalmente */
+    align-items: center;
+}
+
+label {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+select,
+input {
+    padding: 8px;
+}
+
+.bottons {
+    display: flex;
+    flex-wrap: wrap;
+    /* Permite que los elementos se ajusten en varias líneas si es necesario */
+    justify-content: space-between;
+    /* Espacia los elementos de manera uniforme */
+    text-align: center;
+    margin-top: 15px;
+}
+
+button {
+    padding: 12px;
+    text-transform: uppercase;
+}
+
+.Agregar {
+    background-color: rgb(48, 228, 48);
+    border-radius: 15px;
+}
+
+.Eliminar {
+    background-color: rgb(228, 48, 48);
+    border-radius: 15px;
+}
+
+.Limpiar {
+    background-color: rgb(48, 69, 228);
+    border-radius: 15px;
+}
+
+.Calcular {
+    background-color: rgb(48, 186, 228);
+    border-radius: 15px;
+}
+.resultado{
+    margin-top: 15px;
+    background-color: rgba(0, 255, 255, 0.541);
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.Subtitle{
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* Media Queries para dispositivos más pequeños */
+@media (max-width: 768px) {
+    .Title {
+        flex-direction: column;
+        /* Cambia la dirección de los elementos a columna en pantallas más pequeñas */
+    }
+
+    button {
+        margin-right: 0;
+        /* Elimina el margen derecho en pantallas pequeñas */
+        margin-bottom: 10px;
+        /* Añade margen inferior en pantallas pequeñas */
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        margin: 10px;
+        /* Reduce el margen en pantallas muy pequeñas */
+    }
+
+    input,
+    select {
+        font-size: 14px;
+        /* Ajusta el tamaño de la fuente para campos de entrada en pantallas pequeñas */
+    }
+
+    h1 {
+        font-size: 24px;
+        /* Reduce el tamaño del texto del título en pantallas pequeñas */
+    }
+}

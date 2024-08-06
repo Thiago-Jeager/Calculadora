@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Cp - Joback</title>
+    <link rel="stylesheet" href="../static/style.css"> <!-- Enlace al archivo de estilos -->
+</head>
+
+<body>
+    <!-- Título de la página -->
+    <div class="Title">
+        <h1>Calculadora Ec.Joback</h1>
+    </div>
+
+    <!-- Imagen de la página -->
+    <div class="Image">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Escudo_de_la_Universidad_Central_del_Ecuador_-_Andr%C3%A9s_Agual.png"
+            alt="Descripción de la imagen" style="width: 100px;">
+    </div>
+
+    <!-- Subtítulo -->
+    <h2>Ingeniería química</h2>
+
+    <!-- Selección de tipo de grupo funcional -->
+    <label for="tipo-grupo">Tipo de Grupo:</label>
+    <select id="tipo-grupo" onchange="actualizarGrupos()">
+        <option value="">Selecciona un tipo de grupo</option>
+        <option value="Incremente sin anillo">Incremente sin anillo</option>
+        <option value="Incremento con anillo">Incremento con anillo</option>
+        <option value="Incremento de Halógenos">Incremento de Halógenos</option>
+        <option value="Incremento oxígeno">Incremento oxígeno</option>
+        <option value="Incrementos nitrógenos">Incrementos nitrógenos</option>
+        <option value="Sulfuro incrementos">Sulfuro incrementos</option>
+    </select>
+
+    <!-- Selección de grupo funcional -->
+    <label for="grupo">Grupo Funcional:</label>
+    <select id="grupo">
+        <!-- Opciones de grupo funcional serán agregadas dinámicamente -->
+    </select>
+
+    <!-- Entrada de cantidad -->
+    <label for="cantidad">Cantidad:</label>
+    <input type="number" id="cantidad" name="cantidad">
+
+    <!-- Entradas para temperaturas -->
+    <label for="temperatura-min">Temperatura Inicial (K):</label>
+    <input type="number" id="temperatura-min" name="temperatura-min" step="any" min="0" required>
+
+    <label for="temperatura-max">Temperatura Final (K):</label>
+    <input type="number" id="temperatura-max" name="temperatura-max" step="any" min="0" required>
+
+    <!-- Botones para interactuar con la calculadora -->
+    <div class="bottons">
+        <button onclick="agregarGrupo()" class="Agregar">Agregar Grupo</button>
+        <button onclick="limpiarGrupos()" class="Limpiar">Limpiar Grupos</button>
+        <button onclick="calcularCp()" class="Calcular">Calcular CP</button>
+    </div>
+
+        <label for="" class="Subtitle">Estimación del cp  de los gases y Entalpia: </label>
+        <!-- Div para mostrar los resultados -->
+        <div id="resultado" class="resultado"></div>
+
+    <script>
+        // Objeto para almacenar los grupos funcionales y sus cantidades
+        const gruposFuncionales = {};
+
+        // Diccionario que asocia tipos de grupos con sus grupos funcionales específicos
+        const grupos = {
+            'Incremente sin anillo': ['-CH3', '>CH2', '>CH-', '>C<', '=CH2', '=CH-', '=C<', '=C=', '≡CH', '≡C-'],
+            'Incremento con anillo': ['-CH2-', '>CH-', '>C<', '=CH-', '-C<'],
+            'Incremento de Halógenos': ['-F', '-CL', '-BR', '-I'],
+            'Incremento oxígeno': ['-OH(alcohol)', '-OH(phenol)', '-O-(nonring)', '-O-(ring)', '>C=O(nonring)', '>C=O(ring)', 'O=CH-(aldehyde)', '-COOH(acid)', '-COO-(ester)', '=O(except as above)'],
+            'Incrementos nitrógenos': ['-NH2', '>NH(nonring)', '>NH(ring)', '>N-(nonring)', '-N=(nonring)', '-N=(ring)', '=NH', '-CN', '-NO2'],
+            'Sulfuro incrementos': ['-SH', '-S-(nonring)', '-S-(ring)']
+        };
+
+        // Actualizar las opciones del grupo funcional según el tipo seleccionado
+        function actualizarGrupos() {
+            const tipo = document.getElementById('tipo-grupo').value;
+            const grupoSelect = document.getElementById('grupo');
+            grupoSelect.innerHTML = '<option value="">Selecciona un grupo funcional</option>';
+            if (tipo) {
+                grupos[tipo].forEach(grupo => {
+                    const option = document.createElement('option');
+                    option.value = grupo;
+                    option.textContent = grupo;
+                    grupoSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Agregar un grupo funcional al objeto de grupos funcionales
+        function agregarGrupo() {
+            const grupo = document.getElementById('grupo').value;
+            const cantidad = parseFloat(document.getElementById('cantidad').value);
+
+            if (grupo && !isNaN(cantidad)) {
+                gruposFuncionales[grupo] = cantidad;
+                document.getElementById('grupo').value = '';
+                document.getElementById('cantidad').value = '';
+                mostrarGrupos();
+            } else {
+                alert('Por favor, ingrese un grupo funcional y una cantidad válida.');
+            }
+        }
+
+        // Limpiar todos los grupos funcionales del objeto
+        function limpiarGrupos() {
+            for (const grupo in gruposFuncionales) {
+                delete gruposFuncionales[grupo];
+            }
+            mostrarGrupos();
+        }
+
+        // Mostrar la lista de grupos funcionales y sus cantidades
+        function mostrarGrupos() {
+            const lista = Object.entries(gruposFuncionales)
+                .map(([grupo, cantidad]) => `<li>${grupo}: ${cantidad}</li>`)
+                .join('');
+            document.getElementById('resultado').innerHTML = `<ul>${lista}</ul>`;
+        }
+
+        // Enviar los datos al servidor para calcular el Cp y mostrar el resultado
+        function calcularCp() {
+            const tempMin = parseFloat(document.getElementById('temperatura-min').value);
+            const tempMax = parseFloat(document.getElementById('temperatura-max').value);
+
+            fetch('http://127.0.0.1:5000/calcular', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ grupos_funcionales: gruposFuncionales, temperatura_min: tempMin, temperatura_max: tempMax }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('resultado').innerHTML = `<p>${data.error}</p>`;
+                    } else {
+                        const cpPromedio = data.resultado;
+                        const formula = data.formula;
+                        if (cpPromedio !== undefined) {
+                            document.getElementById('resultado').innerHTML = `<p>${formula}</p><p>El Entalpia ${tempMin} K y ${tempMax} K es ${cpPromedio.toFixed(2)} J/mol</p>`;
+                        } else {
+                            document.getElementById('resultado').innerHTML = `<p>Error: No se pudo calcular ENTALPIA.</p>`;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('resultado').innerHTML = `<p>Error en la solicitud: ${error.message}</p>`;
+                });
+        }
+
+        // Agregar el evento onchange al select de tipo-grupo
+        document.getElementById('tipo-grupo').addEventListener('change', actualizarGrupos);
+    </script>
+</body>
+
+</html>
