@@ -107,7 +107,7 @@ def calcular():
     })
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('')
 
 # Ejecutar la aplicación en modo de depuración
 if __name__ == '__main__':
