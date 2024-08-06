@@ -128,7 +128,7 @@
             const tempMin = parseFloat(document.getElementById('temperatura-min').value);
             const tempMax = parseFloat(document.getElementById('temperatura-max').value);
 
-            fetch('http://127.0.0.1:5000/calcular', {
+            fetch('https://calculadora-production-0df4.up.railway.app/calcular', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
